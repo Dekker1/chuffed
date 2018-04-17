@@ -30,6 +30,8 @@ using namespace std;
 
 void output_var(Branching *v);
 
+extern int restartCount;
+
 namespace FlatZinc {
 
     FlatZincSpace *s;
@@ -517,6 +519,57 @@ namespace FlatZinc {
                     out << s[i];
                 }
             }
+        }
+    }
+
+    void FlatZincSpace::storeSolution() {
+        solution_found = true;
+        if (int_sol.empty()) { return; }
+
+        for (auto &i : int_sol) {
+            int_sol_val[i[1]] = iv[i[0]]->getVal();
+        }
+        new_solution = true;
+    }
+
+    void FlatZincSpace::onRestart(Engine *e) {
+        if (int_sol.empty() && int_uniform.empty() && restart_status <= 0) { return; }
+        // Reset to root node
+        if (e->assumptions.size() >= 0) {
+            e->assumptions.clear();
+            Lit p = e->opt_type ? e->opt_var->getLit(e->best_sol+1, 2) : e->opt_var->getLit(e->best_sol-1, 3);
+            e->assumptions.push(toInt(p));
+        }
+
+        if (restart_status > 0) {
+            if (new_solution) {
+                Lit p = iv[restart_status]->getLit(3, 1); // SAT
+                e->assumptions.push(toInt(p));
+            } else if (!solution_found) {
+                Lit p = iv[restart_status]->getLit(1, 1); // UNKNOWN
+                e->assumptions.push(toInt(p));
+            } else {
+                Lit p = iv[restart_status]->getLit(2, 1); // UNSAT
+                e->assumptions.push(toInt(p));
+            }
+        }
+
+        if (restart_number > 0) {
+            Lit p = iv[restart_number]->getLit(restartCount, 1); // SAT
+            e->assumptions.push(toInt(p));
+        }
+
+        for (const auto &i : int_uniform) {
+            int r = i[0] + rand()/(RAND_MAX/(i[1] - i[0])+1);
+            e->assumptions.push(toInt(iv[i[2]]->getLit(r, 1)));
+        }
+
+        if (!int_sol_val.empty()) {
+            assert(int_sol_val.size() == int_sol.size());
+            for (const auto &i : int_sol_val) {
+                e->assumptions.push(toInt(iv[i.first]->getLit(i.second, 1)));
+            }
+            new_solution = false;
         }
     }
 

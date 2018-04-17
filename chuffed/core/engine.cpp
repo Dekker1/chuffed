@@ -303,6 +303,9 @@ inline bool Engine::constrain() {
     best_sol = opt_var->getVal();
     opt_time = std::chrono::duration_cast<duration>(chuffed_clock::now() - start_time) - init_time;
 
+    auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
+    if (fzn) { fzn->storeSolution(); }
+
     sat.btToLevel(0);
     restart_count++;
     nodepath.resize(0);
@@ -331,6 +334,9 @@ inline bool Engine::constrain() {
     assumptions.push(toInt(p));
 
     if (so.mip) mip->setObjective(best_sol);
+
+
+    if (fzn) { fzn->onRestart(this); }
 
     /* return (opt_type ? opt_var->setMin(best_sol+1) : opt_var->setMax(best_sol-1)); */
     return true;
@@ -531,6 +537,11 @@ RESULT Engine::search(const std::string& problemLabel) {
         profilerConnector->start(problemLabel, so.cpprofiler_id, true);
     }
 #endif
+    auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
+    if (fzn && fzn->restart_status >= 0) {
+        Lit p = fzn->iv[fzn->restart_status]->getLit(1, 1); // UNKNOWN
+        assumptions.push(toInt(p));
+    }
   
     decisionLevelTip.push_back(1);
 
@@ -734,6 +745,9 @@ RESULT Engine::search(const std::string& problemLabel) {
                     profilerConnector->restart(restart_count);
                 }
 #endif
+                auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
+                if(fzn) { fzn->onRestart(this); }
+
                 toggleVSIDS();
             }
 
@@ -754,6 +768,9 @@ RESULT Engine::search(const std::string& problemLabel) {
                     profilerConnector->restart(restart_count);
                 }
 #endif
+
+                auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
+                if(fzn) { fzn->onRestart(this); }
 
                 sat.confl = NULL;
                 if (so.lazy && so.toggle_vsids && (starts % 2 == 1)) toggleVSIDS();
@@ -778,6 +795,17 @@ RESULT Engine::search(const std::string& problemLabel) {
                     engine.dec_info.push(DecInfo(NULL, p));
                     newDecisionLevel();
                 } else if (sat.value(toLit(p)) == l_False) {
+                    auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
+                    if (fzn) {
+                        if (!fzn->solution_found || decisionLevel() != 0) {
+                            sat.btToLevel(0);
+                            restartCount++;
+                            nodepath.resize(0);
+                            altpath.resize(0);
+                            fzn->onRestart(this);
+                            break;
+                        }
+                    }
                     return RES_LUN;
                 } else {
                     di = new DecInfo(NULL, p);

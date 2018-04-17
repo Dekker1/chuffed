@@ -23,6 +23,7 @@
 #ifndef flatzinc_h
 #define flatzinc_h
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@
 #include <chuffed/core/engine.h>
 #include <chuffed/core/propagator.h>
 #include <chuffed/flatzinc/ast.h>
+#include <unordered_map>
 
 extern std::map<IntVar*, std::string> intVarString;
 extern std::map<BoolView, std::string> boolVarString;
@@ -273,6 +275,21 @@ namespace FlatZinc {
 
         AST::Array* output;
 
+        /// status() variable
+        int restart_status = -1;
+        bool solution_found = false;
+        bool new_solution = false;
+        /// restart_number() variable
+        int restart_number = -1;
+        /// int_rnd definitions
+        std::vector<std::array<int, 3>> int_uniform;
+        /// int_sol definitions
+        std::vector<std::array<int, 2>> int_sol;
+        std::unordered_map<int, int> int_sol_val;
+
+        void storeSolution();
+        void onRestart(Engine *e);
+
         /// Construct problem with given number of variables
         FlatZincSpace(int intVars, int boolVars, int setVars);
 
@@ -481,6 +498,10 @@ namespace FlatZinc {
         std::vector<varspec> intvars;
         std::vector<varspec> boolvars;
         std::vector<varspec> setvars;
+
+        int status_idx = -1;
+        std::vector<std::array<int, 3>> int_uniform;
+        std::vector<std::array<int, 2>> int_sol;
 
         std::vector<ConExpr*> domainConstraints;
 #if EXPOSE_INT_LITS

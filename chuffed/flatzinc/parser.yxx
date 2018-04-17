@@ -1271,10 +1271,22 @@ constraint_item :
 #else
             ConExpr c($2, $4);
             if (!pp->hadError) {
-                try {
-                    pp->fg->postConstraint(c, $6);
-                } catch (FlatZinc::Error& e) {
-                    yyerror(pp, e.toString().c_str());
+                if (c.id == "status") {
+                    pp->fg->restart_status = c.args->a[0]->getIntVar();
+                } else if (c.id == "restart_number") {
+                    pp->fg->restart_number = c.args->a[0]->getIntVar();
+                } else if (c.id == "int_uniform") {
+                    auto args = c.args;
+                    pp->fg->int_uniform.emplace_back(std::array<int, 3>{ args->a[0]->getInt(), args->a[1]->getInt(), args->a[2]->getIntVar() });
+                } else if (c.id == "int_sol") {
+                    auto args = c.args;
+                    pp->fg->int_sol.emplace_back(std::array<int, 2>{ args->a[0]->getIntVar(), args->a[1]->getIntVar() });
+                } else {
+                    try {
+                        pp->fg->postConstraint(c, $6);
+                    } catch (FlatZinc::Error& e) {
+                        yyerror(pp, e.toString().c_str());
+                    }
                 }
             }
             delete $6;
