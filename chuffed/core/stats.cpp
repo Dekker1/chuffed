@@ -7,6 +7,7 @@
 #include <chuffed/mip/mip.h>
 #include <chuffed/ldsb/ldsb.h>
 
+extern int restartCount;
 
 void Engine::printStats() {
 	if (so.thread_no != -1) return;
