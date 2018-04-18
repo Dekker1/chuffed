@@ -333,10 +333,9 @@ inline bool Engine::constrain() {
     assumptions.clear();
     assumptions.push(toInt(p));
 
-    if (so.mip) mip->setObjective(best_sol);
-
-
     if (fzn) { fzn->onRestart(this); }
+
+    if (so.mip) mip->setObjective(best_sol);
 
     /* return (opt_type ? opt_var->setMin(best_sol+1) : opt_var->setMax(best_sol-1)); */
     return true;
@@ -803,7 +802,7 @@ RESULT Engine::search(const std::string& problemLabel) {
                             nodepath.resize(0);
                             altpath.resize(0);
                             fzn->onRestart(this);
-                            break;
+                            continue;
                         }
                     }
                     return RES_LUN;

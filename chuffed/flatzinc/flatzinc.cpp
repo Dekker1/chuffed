@@ -534,10 +534,11 @@ namespace FlatZinc {
 
     void FlatZincSpace::onRestart(Engine *e) {
         if (int_sol.empty() && int_uniform.empty() && restart_status <= 0) { return; }
-        // Reset to root node
-        if (e->assumptions.size() >= 0) {
-            e->assumptions.clear();
+
+        // Reset Assumptions if not called from constrain()
+        if (e->assumptions.size() > 1) {
             Lit p = e->opt_type ? e->opt_var->getLit(e->best_sol+1, 2) : e->opt_var->getLit(e->best_sol-1, 3);
+            e->assumptions.clear();
             e->assumptions.push(toInt(p));
         }
 
