@@ -536,10 +536,14 @@ namespace FlatZinc {
         if (int_sol.empty() && int_uniform.empty() && restart_status <= 0) { return; }
 
         // Reset Assumptions if not called from constrain()
-        if (e->assumptions.size() > 1) {
-            Lit p = e->opt_type ? e->opt_var->getLit(e->best_sol+1, 2) : e->opt_var->getLit(e->best_sol-1, 3);
-            e->assumptions.clear();
-            e->assumptions.push(toInt(p));
+        if (e->assumptions.size() != 0) {
+            if (!solution_found) {
+                e->assumptions.clear();
+            } else if (e->assumptions.size() > 1) {
+                Lit p = e->opt_type ? e->opt_var->getLit(e->best_sol+1, 2) : e->opt_var->getLit(e->best_sol-1, 3);
+                e->assumptions.clear();
+                e->assumptions.push(toInt(p));
+            }
         }
 
         if (restart_status > 0) {
