@@ -559,6 +559,15 @@ namespace FlatZinc {
             }
         }
 
+        for (const auto &i : int_lastval) {
+            if(iv[i[0]]->getType() == INT_VAR_EL) {
+                e->assumptions.push(toInt(iv[i[0]]->getLit(i[1], 1)));
+            } else {
+                e->assumptions.push(toInt(iv[i[0]]->getLit(i[1], 3)));
+                e->assumptions.push(toInt(iv[i[0]]->getLit(i[1], 2)));
+            }
+        }
+
         if (restart_number > 0) {
             Lit p = iv[restart_number]->getLit(restartCount, 1); // SAT
             e->assumptions.push(toInt(p));

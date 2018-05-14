@@ -26,9 +26,9 @@ void range_size(IntVar* x, IntVar* y) {
 class LastVal : public Propagator {
 public:
     IntVar* x;
-    std::shared_ptr<int> v;
+    int* v;
 
-    LastVal(IntVar* _x, std::shared_ptr<int>& _v) : x(_x), v(_v) {
+    LastVal(IntVar* _x, int* _v) : x(_x), v(_v) {
         priority = 0;
         x->attach(this, 0, EVENT_F);
     }
@@ -44,6 +44,6 @@ public:
     }
 };
 
-void last_val(IntVar* x, std::shared_ptr<int>& v) {
-    new LastVal(x,v);
+void last_val(IntVar* x, int* v) {
+    new LastVal(x, v);
 }

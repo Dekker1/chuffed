@@ -147,4 +147,6 @@ void array_var_int_element_dom(IntVar* x, vec<IntVar*>& a, IntVar* y, int offset
 // y = |ub(x) - lb(y) + 1|
 void range_size(IntVar* x, IntVar* s);
 
+void last_val(IntVar* x, int* v);
+
 #endif

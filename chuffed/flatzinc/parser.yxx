@@ -1278,6 +1278,10 @@ constraint_item :
                 } else if (c.id == "int_uniform") {
                     auto args = c.args;
                     pp->fg->int_uniform.emplace_back(std::array<int, 3>{ args->a[0]->getInt(), args->a[1]->getInt(), args->a[2]->getIntVar() });
+                } else if (c.id == "int_lastval") {
+                    auto args = c.args;
+                    pp->fg->int_lastval.emplace_back(std::array<int, 2>{ args->a[1]->getIntVar(), pp->fg->iv[args->a[0]->getIntVar()]->getMin() });
+                    last_val(pp->fg->iv[args->a[0]->getIntVar()], &(pp->fg->int_lastval[pp->fg->int_lastval.size()-1][1]));
                 } else if (c.id == "int_sol") {
                     auto args = c.args;
                     pp->fg->int_sol.emplace_back(std::array<int, 2>{ args->a[0]->getIntVar(), args->a[1]->getIntVar() });

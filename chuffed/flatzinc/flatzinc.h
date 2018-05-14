@@ -286,6 +286,8 @@ namespace FlatZinc {
         /// int_sol definitions
         std::vector<std::array<int, 2>> int_sol;
         std::unordered_map<int, int> int_sol_val;
+        /// int_lastval definitions
+        std::vector<std::array<int, 2>> int_lastval;
 
         void storeSolution();
         void onRestart(Engine *e);
