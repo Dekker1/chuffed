@@ -538,7 +538,7 @@ RESULT Engine::search(const std::string& problemLabel) {
 #endif
     auto fzn = dynamic_cast<FlatZinc::FlatZincSpace*>(problem);
     if (fzn && fzn->restart_status >= 0) {
-        Lit p = fzn->iv[fzn->restart_status]->getLit(1, 1); // UNKNOWN
+        Lit p = fzn->iv[fzn->restart_status]->getLit(1, 1); // START
         assumptions.push(toInt(p));
     }
   

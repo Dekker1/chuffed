@@ -548,13 +548,13 @@ namespace FlatZinc {
 
         if (restart_status > 0) {
             if (new_solution) {
-                Lit p = iv[restart_status]->getLit(3, 1); // SAT
+                Lit p = iv[restart_status]->getLit(4, 1); // SAT
                 e->assumptions.push(toInt(p));
             } else if (!solution_found) {
-                Lit p = iv[restart_status]->getLit(1, 1); // UNKNOWN
+                Lit p = iv[restart_status]->getLit(1, 1); // START
                 e->assumptions.push(toInt(p));
             } else {
-                Lit p = iv[restart_status]->getLit(2, 1); // UNSAT
+                Lit p = iv[restart_status]->getLit(2, 1); // UNKNOWN
                 e->assumptions.push(toInt(p));
             }
         }
