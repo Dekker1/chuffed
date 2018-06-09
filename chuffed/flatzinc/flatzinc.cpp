@@ -546,7 +546,7 @@ namespace FlatZinc {
             }
         }
 
-        if (restart_status > 0) {
+        if (restart_status >= 0) {
             if (new_solution) {
                 Lit p = iv[restart_status]->getLit(4, 1); // SAT
                 e->assumptions.push(toInt(p));
@@ -568,9 +568,16 @@ namespace FlatZinc {
             }
         }
 
-        if (restart_number > 0) {
-            Lit p = iv[restart_number]->getLit(restartCount, 1); // SAT
-            e->assumptions.push(toInt(p));
+        if (restart_number >= 0) {
+            if(iv[restart_number]->getType() == INT_VAR_EL) {
+                Lit p = iv[restart_number]->getLit(restartCount, 1);
+                e->assumptions.push(toInt(p));
+            } else {
+                Lit p1 = iv[restart_number]->getLit(restartCount, 2);
+                Lit p2 = iv[restart_number]->getLit(restartCount, 3);
+                e->assumptions.push(toInt(p1));
+                e->assumptions.push(toInt(p2));
+            }
         }
 
         for (const auto &i : int_uniform) {
