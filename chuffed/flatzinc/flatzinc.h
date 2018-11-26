@@ -279,8 +279,6 @@ namespace FlatZinc {
         int restart_status = -1;
         bool solution_found = false;
         bool new_solution = false;
-        /// restart_number() variable
-        int restart_number = -1;
         /// int_rnd definitions
         std::vector<std::array<int, 3>> int_uniform;
         /// int_sol definitions

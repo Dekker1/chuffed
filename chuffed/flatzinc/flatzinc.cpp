@@ -30,8 +30,6 @@ using namespace std;
 
 void output_var(Branching *v);
 
-extern int restartCount;
-
 namespace FlatZinc {
 
     FlatZincSpace *s;
@@ -565,18 +563,6 @@ namespace FlatZinc {
             } else {
                 e->assumptions.push(toInt(iv[i[0]]->getLit(i[1], 3)));
                 e->assumptions.push(toInt(iv[i[0]]->getLit(i[1], 2)));
-            }
-        }
-
-        if (restart_number >= 0) {
-            if(iv[restart_number]->getType() == INT_VAR_EL) {
-                Lit p = iv[restart_number]->getLit(restartCount, 1);
-                e->assumptions.push(toInt(p));
-            } else {
-                Lit p1 = iv[restart_number]->getLit(restartCount, 2);
-                Lit p2 = iv[restart_number]->getLit(restartCount, 3);
-                e->assumptions.push(toInt(p1));
-                e->assumptions.push(toInt(p2));
             }
         }
 

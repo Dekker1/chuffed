@@ -798,7 +798,6 @@ RESULT Engine::search(const std::string& problemLabel) {
                     if (fzn) {
                         if (!fzn->solution_found || decisionLevel() != 0) {
                             sat.btToLevel(0);
-                            restartCount++;
                             nodepath.resize(0);
                             altpath.resize(0);
                             fzn->onRestart(this);

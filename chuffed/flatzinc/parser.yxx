@@ -1273,8 +1273,6 @@ constraint_item :
             if (!pp->hadError) {
                 if (c.id == "status") {
                     pp->fg->restart_status = c.args->a[0]->getIntVar();
-                } else if (c.id == "restart_number") {
-                    pp->fg->restart_number = c.args->a[0]->getIntVar();
                 } else if (c.id == "int_uniform") {
                     auto args = c.args;
                     pp->fg->int_uniform.emplace_back(std::array<int, 3>{ args->a[0]->getInt(), args->a[1]->getInt(), args->a[2]->getIntVar() });
