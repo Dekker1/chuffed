@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.1.  */
+/* A Bison parser, made by GNU Bison 3.7.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -49,7 +49,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.7.1"
+#define YYBISON_VERSION "3.7.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -951,13 +951,13 @@ static const yytype_int16 yyrline[] =
     1038,  1062,  1065,  1071,  1076,  1083,  1089,  1093,  1108,  1132,
     1135,  1141,  1146,  1153,  1156,  1160,  1175,  1199,  1202,  1208,
     1213,  1220,  1227,  1230,  1237,  1240,  1247,  1250,  1257,  1260,
-    1266,  1284,  1305,  1328,  1336,  1353,  1357,  1361,  1367,  1371,
-    1385,  1386,  1393,  1397,  1406,  1409,  1415,  1420,  1428,  1431,
-    1437,  1442,  1450,  1453,  1459,  1464,  1472,  1475,  1481,  1487,
-    1499,  1503,  1510,  1514,  1521,  1524,  1530,  1534,  1538,  1542,
-    1546,  1595,  1609,  1612,  1618,  1622,  1633,  1654,  1684,  1706,
-    1707,  1715,  1718,  1724,  1728,  1735,  1740,  1746,  1750,  1757,
-    1761,  1767,  1771,  1775,  1779,  1783,  1826,  1837
+    1266,  1298,  1319,  1342,  1350,  1367,  1371,  1375,  1381,  1385,
+    1399,  1400,  1407,  1411,  1420,  1423,  1429,  1434,  1442,  1445,
+    1451,  1456,  1464,  1467,  1473,  1478,  1486,  1489,  1495,  1501,
+    1513,  1517,  1524,  1528,  1535,  1538,  1544,  1548,  1552,  1556,
+    1560,  1609,  1623,  1626,  1632,  1636,  1647,  1668,  1698,  1720,
+    1721,  1729,  1732,  1738,  1742,  1749,  1754,  1760,  1764,  1771,
+    1775,  1781,  1785,  1789,  1793,  1797,  1840,  1851
 };
 #endif
 
@@ -2833,10 +2833,24 @@ yyreduce:
 #else
             ConExpr c((yyvsp[-4].sValue), (yyvsp[-2].argVec));
             if (!pp->hadError) {
-                try {
-                    pp->fg->postConstraint(c, (yyvsp[0].argVec));
-                } catch (FlatZinc::Error& e) {
-                    yyerror(pp, e.toString().c_str());
+                if (c.id == "status") {
+                    pp->fg->restart_status = c.args->a[0]->getIntVar();
+                } else if (c.id == "int_uniform") {
+                    auto args = c.args;
+                    pp->fg->int_uniform.emplace_back(std::array<int, 3>{ args->a[0]->getInt(), args->a[1]->getInt(), args->a[2]->getIntVar() });
+                } else if (c.id == "int_lastval") {
+                    auto args = c.args;
+                    pp->fg->int_lastval.emplace_back(std::array<int, 2>{ args->a[1]->getIntVar(), pp->fg->iv[args->a[0]->getIntVar()]->getMin() });
+                    last_val(pp->fg->iv[args->a[0]->getIntVar()], &(pp->fg->int_lastval[pp->fg->int_lastval.size()-1][1]));
+                } else if (c.id == "int_sol") {
+                    auto args = c.args;
+                    pp->fg->int_sol.emplace_back(std::array<int, 2>{ args->a[0]->getIntVar(), args->a[1]->getIntVar() });
+                } else {
+                    try {
+                        pp->fg->postConstraint(c, (yyvsp[0].argVec));
+                    } catch (FlatZinc::Error& e) {
+                        yyerror(pp, e.toString().c_str());
+                    }
                 }
             }
             delete (yyvsp[0].argVec);
