@@ -813,9 +813,6 @@ namespace FlatZinc {
 		void p_bool_sum_eq(const ConExpr& ce, AST::Node* ann) {
 			p_bool_sum_CMP(IRT_EQ, ce, ann);
 		}
-		void p_bool_sum_ne(const ConExpr& ce, AST::Node* ann) {
-			p_bool_sum_CMP(IRT_NE, ce, ann);
-		}
 		void p_bool_sum_le(const ConExpr& ce, AST::Node* ann) {
 			p_bool_sum_CMP(IRT_LE, ce, ann);
 		}
@@ -1154,7 +1151,6 @@ namespace FlatZinc {
 				registry().add("cumulatives", &p_cumulatives);
 */
 				registry().add("bool_sum_eq", &p_bool_sum_eq);
-				registry().add("bool_sum_ne", &p_bool_sum_ne);
 				registry().add("bool_sum_le", &p_bool_sum_le);
 				registry().add("bool_sum_lt", &p_bool_sum_lt);
 				registry().add("bool_sum_ge", &p_bool_sum_ge);
