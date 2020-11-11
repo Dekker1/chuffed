@@ -1,5 +1,5 @@
 {
-  "id": "org.chuffed.chuffed",
+  "id": "org.chuffed.chuffed-hr",
   "name": "Chuffed",
   "description": "Chuffed FlatZinc executable",
   "version": "${chuffed_VERSION_MAJOR}.${chuffed_VERSION_MINOR}.${chuffed_VERSION_PATCH}",
